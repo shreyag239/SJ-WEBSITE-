@@ -25,6 +25,111 @@
         <link rel="stylesheet" href="css/style.css"/>
         <link rel="stylesheet" href="css/responsive.css"/>
         <link rel="stylesheet" href="demos/product-showcase/product-showcase.css" />
+        <style>
+            /* Custom arrow styles for Revolution Slider */
+            .tp-arr-allwrapper .custom-arrow {
+                font-size: 20px;
+                color: #333;
+                background: rgba(255, 255, 255, 0.9);
+                border: 2px solid #333;
+                border-radius: 50%;
+                width: 50px;
+                height: 50px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.3s ease;
+                font-weight: bold;
+                line-height: 1;
+            }
+            
+            .tp-arr-allwrapper:hover .custom-arrow {
+                background: #333;
+                color: white;
+                transform: scale(1.1);
+            }
+            
+            /* Right arrow specific styling */
+            .tp-rightarrow .custom-arrow::before {
+                content: "▶";
+            }
+            
+            .tp-leftarrow .custom-arrow::before {
+                content: "◀";
+            }
+            
+            /* Hide any remaining images and unwanted elements */
+            .tp-arr-allwrapper .tp-arr-imgholder,
+            .tp-arr-allwrapper img,
+            .tp-arr-allwrapper .tp-arr-iwrapper,
+            .tp-arr-allwrapper .tp-arr-titleholder,
+            .tp-arr-allwrapper .tp-arr-imgholder div,
+            .tp-arr-allwrapper .tp-arr-iwrapper div,
+            .tp-arr-allwrapper .tp-arr-inner,
+            .tp-bullets,
+            .tp-bullet {
+                display: none !important;
+                visibility: hidden !important;
+                opacity: 0 !important;
+            }
+            
+            /* Hide any small squares or artifacts above arrows */
+            .tp-leftarrow:before,
+            .tp-rightarrow:before,
+            .tp-leftarrow:after,
+            .tp-rightarrow:after,
+            .tp-arr-allwrapper:before,
+            .tp-arr-allwrapper:after {
+                display: none !important;
+                content: none !important;
+            }
+            
+            /* Ensure arrows are visible and properly positioned */
+            .tp-arr-allwrapper {
+                opacity: 1 !important;
+                visibility: visible !important;
+                background: none !important;
+                border: none !important;
+                box-shadow: none !important;
+            }
+            
+            /* Show only our custom arrows */
+            .tp-arr-allwrapper .custom-arrow {
+                display: flex !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+            }
+            
+            /* Ensure header stays above slider overlay */
+            header {
+                position: relative;
+                z-index: 1000;
+            }
+            /* Ensure navigation bar is fixed and styled */
+            nav.navbar {
+                position: fixed;
+                top: 0;
+                width: 100%;
+                background-color: white;
+                z-index: 1000;
+                box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            }
+
+            /* Add padding to body to prevent content overlap */
+            body {
+                padding-top: 70px; /* Adjust based on navbar height */
+            }
+
+            @media (max-width: 768px) {
+                #slide-1-layer-subtitle1 {
+                    font-size: 40px !important;
+                    line-height: 50px !important;
+                    text-align: center !important;
+                    transform: translateY(-50px) !important;
+                    position: relative;
+                }
+            }
+        </style>
     </head>
     <body data-mobile-nav-style="classic">
         <!-- start header -->
@@ -99,7 +204,7 @@
                                      data-letterspacing="['0','0','0','0']"
                                      data-x="['center','center','center','center']"
                                      data-y="['middle','middle','middle','middle']"
-                                     data-hoffset="['-400','-300','-240','-160']"
+                                     data-hoffset="['-340','-250','-200','-120']"
                                      data-voffset="['-300','-240','-190','-170']"
                                      data-width="['auto','auto','auto','auto']"
                                      data-height="['auto','auto','auto','auto']"
@@ -110,7 +215,7 @@
                                      Your Trusted Partner
                                 </div>
 
-                                <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1;"></div>
+                                <!-- <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1;"></div> -->
                                 <!-- start large text layer -->
                                 <div class="tp-caption tp-resizeme alt-font rs-parallaxlevel-2" style="background: -webkit-linear-gradient(0deg, #736a63 15%, #6f4f31 65%, #3e2b2b 100%);-webkit-background-clip: text;background-clip: text;-webkit-text-fill-color: transparent;" 
                                      id="slide-1-layer-1"
@@ -213,7 +318,7 @@
                                      data-letterspacing="['0','0','0','0']"
                                      data-x="['center','center','center','center']"
                                      data-y="['middle','middle','middle','middle']"
-                                     data-hoffset="['-510','-380','-310','-210']"
+                                     data-hoffset="['-360','-250','-200','-120']"
                                      data-voffset="['-300','-240','-190','-170']"
                                      data-width="['auto','auto','auto','auto']"
                                      data-height="['auto','auto','auto','auto']"
@@ -223,7 +328,7 @@
                                      style="background: linear-gradient(90deg, #ffffff 15%, #ffffff 65%, #ffffff 100%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; white-space: nowrap;">
                                      Your Trusted Partner
                                 </div>
-                                <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1;"></div>
+                                <!-- <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1;"></div> -->
                                 <!-- start large text layer -->
                                 <div class="tp-caption tp-resizeme alt-font rs-parallaxlevel-2" style="background: -webkit-linear-gradient(0deg, #d3c2af 0%, #c4aa92 50%, #d8c9b9 100%);-webkit-background-clip: text;background-clip: text;-webkit-text-fill-color: transparent;" 
                                      id="slide-2-layer-1"
@@ -258,7 +363,7 @@
                                           data-x="['center','center','center','center']"
                                           data-y="['middle','middle','middle','middle']"
                                           data-hoffset="['250','130','100','80']"
-                                          data-voffset="['70','30','20','10']"
+                                          data-voffset="['110','70','60','40']"
                                           data-width="['auto','auto','auto','auto']"
                                           data-height="['auto','auto','auto','auto']"
                                           data-whitespace="['nowrap','nowrap','nowrap','nowrap']"
@@ -510,7 +615,7 @@
                                      data-letterspacing="['0','0','0','0']"
                                      data-x="['center','center','center','center']"
                                      data-y="['middle','middle','middle','middle']"
-                                     data-hoffset="['-510','-380','-310','-210']"
+                                     data-hoffset="['-400','-320','-250','-170']"
                                      data-voffset="['-300','-240','-190','-170']"
                                      data-width="['auto','auto','auto','auto']"
                                      data-height="['auto','auto','auto','auto']"
@@ -520,7 +625,7 @@
                                      style="background: linear-gradient(90deg, #ffffff 15%, #ffffff 65%, #ffffff 100%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; white-space: nowrap;">
                                      Your Trusted Partner
                                 </div>
-                                <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1;"></div>
+                                <!-- <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1;"></div> -->
                                 <!-- start large text layer -->
                                 <div class="tp-caption tp-resizeme alt-font rs-parallaxlevel-2" style="background: -webkit-linear-gradient(0deg, #769977 0%, #8ec297 50%, #d8ffd7 100%);-webkit-background-clip: text;background-clip: text;-webkit-text-fill-color: transparent;" 
                                      id="slide-3-layer-1"
@@ -748,7 +853,7 @@
                                      data-responsive_offset="off" 
                                      data-responsive="off"
                                      data-frames='[{"delay":2500,"speed":2000,"frame":"0","from":"x:[-100%];z:0;rX:0deg;rY:0;rZ:0;sX:1;sY:1;skX:0;skY:0;","mask":"x:[100%];y:0px;s:inherit;e:inherit;","to":"o:1;","ease":"Power4.easeInOut"},{"delay":660,"speed":600,"to":"y:30px;rX:45deg;sX:0.8;sY:0.8;opacity:0;","ease":"Power2.easeInOut"}]'
-                                     >Designer Tiles</div>
+                                     >Italian Marble</div>
                                 <!-- sliding text -->
                                 <div class="tp-caption alt-font tp-resizeme" 
                                      id="slide-3-layer-9" 
@@ -767,7 +872,7 @@
                                      data-responsive_offset="off" 
                                      data-responsive="off"
                                      data-frames='[{"delay":5000,"speed":2000,"frame":"0","from":"x:[-100%];z:0;rX:0deg;rY:0;rZ:0;sX:1;sY:1;skX:0;skY:0;","mask":"x:[100%];y:0px;s:inherit;e:inherit;","to":"o:1;","ease":"Power4.easeInOut"},{"delay":660,"speed":600,"to":"y:30px;rX:45deg;sX:0.8;sY:0.8;opacity:0;","ease":"Power2.easeInOut"}]'
-                                     >Accent Lighting</div>
+                                     >Hardwood Flooring</div>
                                 <!-- sliding text -->
                                 <div class="tp-caption alt-font tp-resizeme" 
                                      id="slide-3-layer-10" 
@@ -786,7 +891,7 @@
                                      data-responsive_offset="off" 
                                      data-responsive="off"
                                      data-frames='[{"delay":7500,"speed":2000,"frame":"0","from":"x:[-100%];z:0;rX:0deg;rY:0;rZ:0;sX:1;sY:1;skX:0;skY:0;","mask":"x:[100%];y:0px;s:inherit;e:inherit;","to":"o:1;","ease":"Power4.easeInOut"},{"delay":"wait","speed":600,"to":"y:30px;rX:45deg;sX:0.8;sY:0.8;opacity:0;","ease":"Power3.easeInOut"}]'
-                                     >polished Concrete</div>
+                                     >Designer Grade</div>
                             </li>
 
                             <!-- SLIDE 4 - DESIGN -->
@@ -806,7 +911,7 @@
                                      data-letterspacing="['0','0','0','0']"
                                      data-x="['center','center','center','center']"
                                      data-y="['middle','middle','middle','middle']"
-                                     data-hoffset="['-510','-380','-310','-210']"
+                                     data-hoffset="['-360','-250','-200','-120']"
                                      data-voffset="['-300','-240','-190','-170']"
                                      data-width="['auto','auto','auto','auto']"
                                      data-height="['auto','auto','auto','auto']"
@@ -816,11 +921,12 @@
                                      style="background: linear-gradient(90deg, #ffffff 15%, #ffffff 65%, #ffffff 100%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; white-space: nowrap;">
                                      Your Trusted Partner
                                 </div>
-                                <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:1;"></div>
+                                <!-- <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:1;"></div> -->
                                 <!-- start large text layer -->
                                 <div class="tp-caption tp-resizeme alt-font rs-parallaxlevel-2" style="background: -webkit-linear-gradient(0deg, #EAE0D9 0%, #B88A76 50%, #544949 100%);-webkit-background-clip: text;background-clip: text;-webkit-text-fill-color: transparent;" 
                                      id="slide-4-layer-1"
                                      data-frames='[{"delay":1500,"speed":2000,"frame":"0","from":"sX:1.3;opacity:0;fb:20px;","to":"o:1;fb:0;","ease":"Power3.easeInOut"},{"delay":"wait","speed":300,"frame":"999","to":"opacity:0;fb:0;","ease":"Power3.easeInOut"}]'
+                                     data-visibility="['on', 'on', 'on', 'on']"
                                      data-visibility="['on', 'on', 'on', 'on']"
                                      data-fontsize="['346','250','200','120']"
                                      data-lineheight="['450','360','300','200']"
@@ -1112,7 +1218,7 @@
                                      style="background: linear-gradient(90deg, #ffffff 15%, #ffffff 65%, #ffffff 100%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; white-space: nowrap;">
                                      Your Trusted Partner
                                 </div>
-                                <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:1;"></div>
+                                <!-- <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:1;"></div> -->
                                 <!-- start large text layer -->
                                 <div class="tp-caption tp-resizeme alt-font rs-parallaxlevel-2" style="background: -webkit-linear-gradient(0deg, #EBDACB 0%, #C7AC95 50%, #796350 100%);-webkit-background-clip: text;background-clip: text;-webkit-text-fill-color: transparent;" 
                                      id="slide-5-layer-1"
@@ -1418,7 +1524,7 @@
                         </a>
                     </div> 
                 </div> 
-                <div class="row row-cols-1 row-cols-lg-3 row-cols-md-2 justify-content-center" data-anime='{ "el": "childs", "rotateZ": [5, 0], "translateY": [30, 0], "opacity": [0,1], "duration": 600, "delay": 0, "staggervalue": 200, "easing": "easeOutQuad" }'>
+                <div class="row row-cols-1 row-cols-lg-3 row-cols-md-2 justify-content-center" data-anime='{ "el": "childs", "translateY": [30, 0], "opacity": [0,1], "duration": 600, "delay": 0, "staggervalue": 200, "easing": "easeOutQuad" }'>
                     <!-- start process step item -->
                     <div class="col process-step-style-05 position-relative hover-box md-mb-30px">
                         <div class="process-step-item d-flex align-items-center">
@@ -1485,7 +1591,7 @@
                         <h2 class="text-dark-gray fw-800 ls-minus-2px m-0">Exclusive Services.</h2>
                     </div>
                 </div>
-                <div class="row row-cols-1 row-cols-lg-3 row-cols-sm-2 justify-content-center mb-4" data-anime='{ "el": "childs", "translateY": [50, 0], "opacity": [0,1], "duration": 1200, "delay": 0, "staggervalue": 150, "easing": "easeOutQuad" }'>                  
+                <div class="row row-cols-1 row-cols-lg-3 row-cols-md-2 justify-content-center mb-4" data-anime='{ "el": "childs", "translateY": [50, 0], "opacity": [0,1], "duration": 1200, "delay": 0, "staggervalue": 150, "easing": "easeOutQuad" }'>                  
                     <!-- start features box item -->
                     <div class="col icon-with-text-style-03">
                         <div class="feature-box p-8">
@@ -2104,8 +2210,8 @@
                         onHoverStop: "off",
                         arrows: {
                             enable: true,
-                            style: "gyges",
-                            tmp: '<div class="tp-arr-allwrapper"><div class="tp-arr-imgholder" s></div></div>',
+                            style: "uranus",
+                            tmp: '<div class="tp-arr-allwrapper"><span class="custom-arrow"></span></div>',
                             left: {
                                 h_align: "left",
                                 v_align: "center",
