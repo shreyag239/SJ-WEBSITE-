@@ -130,6 +130,65 @@
                 }
             }
         </style>
+        <!-- Budget Calculator Styles -->
+        <style>
+            .calculator-form .step {
+                display: none;
+            }
+            .calculator-form .step.active {
+                display: block;
+            }
+            .step-indicators {
+                display: flex;
+                justify-content: center;
+                gap: 10px;
+                margin-bottom: 30px;
+            }
+            .step-indicator {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: #e9ecef;
+                color: #6c757d;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 600;
+                transition: all 0.3s ease;
+            }
+            .step-indicator.active {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+            }
+            .custom-radio .form-check-input {
+                display: none;
+            }
+            .custom-radio .form-check-label {
+                cursor: pointer;
+                margin: 0;
+            }
+            .custom-radio .form-check-input:checked + .form-check-label .card {
+                border-color: #667eea;
+                box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+            }
+            .form-check.error .card {
+                border-color: #dc3545;
+            }
+            .progress {
+                height: 8px;
+                background: #e9ecef;
+                border-radius: 4px;
+            }
+            .progress-bar {
+                transition: width 0.3s ease;
+            }
+            #budgetResult {
+                min-height: 200px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        </style>
     </head>
     <body data-mobile-nav-style="classic">
         <!-- start header -->
@@ -2033,62 +2092,684 @@
             <div class="container">
                 <div class="row justify-content-center mb-4">
                     <div class="col-xl-7 col-lg-9 text-center" data-anime='{ "el": "childs", "translateY": [50, 0], "opacity": [0,1], "duration": 1200, "delay": 0, "staggervalue": 150, "easing": "easeOutQuad" }'>
-                        <h2 class="h1 fw-800 text-dark-gray ls-minus-3px">Choose the perfect product for you</h2>
+                        <h2 class="h1 fw-800 text-dark-gray ls-minus-3px">Smart Project Budget Calculator</h2>
+                        <p class="fs-18 text-dark-gray">Get an instant estimate for your interior design or construction project in India</p>
                     </div>
                 </div>
-                <div class="row row-cols-1 row-cols-lg-4 row-cols-sm-2 position-relative justify-content-center" data-anime='{ "el": "childs", "rotateZ": [5, 0], "translateY": [30, 0], "opacity": [0,1], "duration": 600, "delay": 100, "staggervalue": 200, "easing": "easeOutQuad" }'>
-                    <!-- start images box -->
-                    <div class="col text-center md-mb-50px"> 
-                        <img class="w-70" src="https://placehold.co/375x415" alt="" />
-                        <div class="mt-30px">
-                            <img src="https://placehold.co/35x35" alt="" />
-                            <span class="fs-18 fw-700 text-dark-gray mt-10px d-block">Silver</span>
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <!-- ensure steps show/hide reliably -->
+                        <style>
+                            /* hide steps by default; show when .active is applied */
+                            .step { display: none; }
+                            .step.active { display: block; }
+                            /* make sure the progress bar transitions smoothly */
+                            #progressBar { transition: width 300ms ease; }
+                            /* interactive item card styles */
+                            .item-card { cursor: pointer; border: 1px solid #eef2f6; border-radius: 12px; padding: 12px; transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; background: #fff; position:relative; }
+                            .item-card:hover { transform: translateY(-6px); box-shadow: 0 10px 30px rgba(33,33,33,0.08); border-color: rgba(130,15,137,0.12); }
+                            .item-card.selected { background: linear-gradient(135deg, rgba(130,15,137,0.06), rgba(255,91,116,0.03)); border-color: rgba(130,15,137,0.28); box-shadow: 0 12px 36px rgba(130,15,137,0.06); }
+                            .item-card .icon-wrap { width:48px; height:48px; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; margin-bottom:8px; background:#fafafa; }
+                            .item-card .icon-wrap img, .item-card .icon-wrap i { width:28px; height:28px; }
+                            .item-card .item-label { display:block; font-weight:600; color:#333; font-size:14px; }
+                            .item-grid { display:flex; flex-wrap:wrap; gap:12px; }
+                            .item-grid .col-item { width: calc(50% - 6px); }
+                            @media(min-width:768px){ .item-grid .col-item { width: calc(33.333% - 8px); } }
+                            /* small visual for selected checkboxes (hidden inputs are used) */
+                            .item-card .checkmark { display:none; transform: scale(0.6); opacity:0; transition: transform .18s ease, opacity .18s ease; font-weight:700; }
+                            .item-card.selected .checkmark { display:inline-block; position:absolute; right:10px; top:10px; color:#6f2c91; transform: scale(1); opacity:1; }
+
+                            /* Step 5 & 6 spacing fixes to avoid clustered controls */
+                            /* add vertical rhythm for form-check rows */
+                            .calculator-form .step .form-check { margin-bottom: 14px; padding: 6px 0; }
+                            /* ensure form sections have breathing room */
+                            .calculator-form .step h3, .calculator-form .step h5 { margin-bottom: 16px; }
+                            /* make paired columns stack cleanly on small screens */
+                            .calculator-form .step .row > [class*="col-"] { margin-bottom: 12px; }
+                            /* ensure static cards (step 5) have consistent height and centered content */
+                            .calculator-form .step .card.h-100 .card-body { min-height: 200px; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; }
+                            .calculator-form .step .card.h-100 .card-title { font-size: 20px; line-height:1.02; }
+                            /* slightly reduce card body padding for better density */
+                            .calculator-form .step .card.h-100 .card-body p.card-text { margin: 8px 0 0; font-size: 13px; color: #666; }
+                            /* make finish/fitout cards show selected border clearly */
+                            .calculator-form .step .form-check-input:checked + .form-check-label .card.h-100 { box-shadow: 0 12px 36px rgba(130,15,137,0.06); border-color: rgba(130,15,137,0.18); }
+                            /* better spacing for checkbox groups in steps 5/6 */
+                            #step5-residential-construction .form-check,
+                            #step5-commercial-construction .form-check,
+                            #step6-residential-interiors .form-check,
+                            #step6-commercial-interiors .form-check { margin-bottom: 12px; }
+                            /* align checkbox and label horizontally with comfortable gap */
+                            .calculator-form .step .form-check { display: flex; align-items: flex-start; gap: 12px; padding: 6px 0; }
+                            /* let the label take remaining width so long text wraps neatly */
+                            .calculator-form .step .form-check .form-check-label { margin: 0; color: #2f2f2f; font-size: 15px; flex: 1 1 auto; }
+                            /* align checkbox to the top of the label for multi-line text */
+                            .calculator-form .step .form-check .form-check-input { width: 20px; height: 20px; margin: 4px 0 0 0; flex: 0 0 22px; }
+                            /* make checkbox hit area larger */
+                            .calculator-form .step .form-check { padding-left: 6px; padding-right: 6px; }
+                            /* summary content sizing and scroll for long lists */
+                            #summary-content { max-height: 350px; overflow-y: auto; padding: 16px; }
+                            #summary-content ul { margin: 0; padding-left: 18px; }
+                            /* make the contact column inputs breathe */
+                            #step6-summary .col-lg-6 > .row .form-control { margin-bottom: 10px; }
+                            /* selected state for bootstrap-like cards used in options */
+                            .calculator-form .card.selected { background: linear-gradient(135deg, rgba(130,15,137,0.06), rgba(255,91,116,0.03)); border-color: rgba(130,15,137,0.28); box-shadow: 0 12px 36px rgba(130,15,137,0.06); }
+                        </style>
+
+                        <div class="calculator-form bg-white p-8 border-radius-6px box-shadow-large">
+                            <!-- Progress Bar -->
+                            <div class="progress mb-6">
+                                <div class="progress-bar bg-gradient-purple-pink" role="progressbar" style="width: 10%" id="progressBar"></div>
+                            </div>
+                            <div class="step-indicators text-center mb-6">
+                                <span class="step-indicator active" data-step="1">1</span>
+                                <span class="step-indicator" data-step="2">2</span>
+                                <span class="step-indicator" data-step="3">3</span>
+                                <span class="step-indicator" data-step="4">4</span>
+                                <span class="step-indicator" data-step="5">5</span>
+                                <span class="step-indicator" data-step="6">6</span>
+                            </div>
+
+                            <!-- Step 1: Project Type -->
+                            <div class="step active" id="step1">
+                                <h3 class="h4 fw-700 text-dark-gray mb-4">What type of project are you planning?</h3>
+                                <div class="row">
+                                    <div class="col-md-6 mb-4">
+                                        <div class="form-check custom-radio">
+                                            <input class="form-check-input" type="radio" name="projectType" id="interiors" value="interiors">
+                                            <label class="form-check-label" for="interiors">
+                                                <div class="card h-100 border-0 box-shadow-medium">
+                                                    <div class="card-body text-center p-4">
+                                                        <i class="line-icon-Home-Window icon-large text-dark-gray mb-3"></i>
+                                                        <h5 class="card-title fw-600">Home & Office Interiors</h5>
+                                                        <p class="card-text small">For designing or renovating the inside of an existing space</p>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <div class="form-check custom-radio">
+                                            <input class="form-check-input" type="radio" name="projectType" id="construction" value="construction">
+                                            <label class="form-check-label" for="construction">
+                                                <div class="card h-100 border-0 box-shadow-medium">
+                                                    <div class="card-body text-center p-4">
+                                                        <i class="line-icon-Construction icon-large text-dark-gray mb-3"></i>
+                                                        <h5 class="card-title fw-600">New Construction</h5>
+                                                        <p class="card-text small">For building a new structure from the ground up</p>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Step 2: Property Type (for both paths) -->
+                            <div class="step" id="step2">
+                                <h3 class="h4 fw-700 text-dark-gray mb-4" id="step2-title">What kind of property is this for?</h3>
+                                <div class="row">
+                                    <div class="col-md-6 mb-4">
+                                        <div class="form-check custom-radio">
+                                            <input class="form-check-input" type="radio" name="propertyType" id="residential" value="residential">
+                                            <label class="form-check-label" for="residential">
+                                                <div class="card h-100 border-0 box-shadow-medium">
+                                                    <div class="card-body text-center p-4">
+                                                        <i class="line-icon-Home icon-large text-dark-gray mb-3"></i>
+                                                        <h5 class="card-title fw-600" id="residential-title">Residential</h5>
+                                                        <p class="card-text small" id="residential-subtitle">Homes, apartments, and personal spaces</p>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <div class="form-check custom-radio">
+                                            <input class="form-check-input" type="radio" name="propertyType" id="commercial" value="commercial">
+                                            <label class="form-check-label" for="commercial">
+                                                <div class="card h-100 border-0 box-shadow-medium">
+                                                    <div class="card-body text-center p-4">
+                                                        <i class="line-icon-Building icon-large text-dark-gray mb-3"></i>
+                                                        <h5 class="card-title fw-600" id="commercial-title">Commercial</h5>
+                                                        <p class="card-text small" id="commercial-subtitle">Offices, shops, and business spaces</p>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Step 3: Basic Details (Residential Interiors) -->
+                            <div class="step" id="step3-residential-interiors">
+                                <h3 class="h4 fw-700 text-dark-gray mb-4">Basic Details</h3>
+                                <div class="row">
+                                    <div class="col-md-6 mb-4">
+                                        <label for="bhk" class="form-label fw-600">Property Configuration</label>
+                                        <select class="form-select" id="bhk">
+                                            <option value="">Select BHK</option>
+                                            <option value="1bhk">1 BHK</option>
+                                            <option value="2bhk">2 BHK</option>
+                                            <option value="3bhk">3 BHK</option>
+                                            <option value="4bhk">4 BHK+</option>
+                                            <option value="villa">Villa</option>
+                                            <option value="penthouse">Penthouse</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <label for="area-ri" class="form-label fw-600">Total Carpet Area (sq ft)</label>
+                                        <input type="number" class="form-control" id="area-ri" placeholder="Enter area in sq ft" min="1">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-4">
+                                        <label for="scope-ri" class="form-label fw-600">Project Scope</label>
+                                        <select class="form-select" id="scope-ri">
+                                            <option value="">Select Scope</option>
+                                            <option value="full-home">Full Home Interior</option>
+                                            <option value="kitchen-wardrobes">Kitchen & Wardrobes Only</option>
+                                            <option value="living-room">Living Room Only</option>
+                                            <option value="renovation">Renovation</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <label for="style-ri" class="form-label fw-600">Design Style (Optional)</label>
+                                        <select class="form-select" id="style-ri">
+                                            <option value="">Select Style</option>
+                                            <option value="modern">Modern</option>
+                                            <option value="minimalist">Minimalist</option>
+                                            <option value="traditional">Traditional</option>
+                                            <option value="industrial">Industrial</option>
+                                            <option value="scandinavian">Scandinavian</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Step 3: Basic Details (Commercial Interiors) -->
+                            <div class="step" id="step3-commercial-interiors">
+                                <h3 class="h4 fw-700 text-dark-gray mb-4">Basic Details</h3>
+                                <div class="row">
+                                    <div class="col-md-6 mb-4">
+                                        <label for="property-type-ci" class="form-label fw-600">Property Type</label>
+                                        <select class="form-select" id="property-type-ci">
+                                            <option value="">Select Type</option>
+                                            <option value="corporate-office">Corporate Office</option>
+                                            <option value="retail-store">Retail Store</option>
+                                            <option value="restaurant-cafe">Restaurant/Cafe</option>
+                                            <option value="clinic">Clinic</option>
+                                            <option value="showroom">Showroom</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <label for="area-ci" class="form-label fw-600">Total Carpet Area (sq ft)</label>
+                                        <input type="number" class="form-control" id="area-ci" placeholder="Enter area in sq ft" min="1">
+                                    </div>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="scope-ci" class="form-label fw-600">Project Scope</label>
+                                    <select class="form-select" id="scope-ci">
+                                        <option value="">Select Scope</option>
+                                        <option value="full-fitout">Full Office Fit-out</option>
+                                        <option value="reception-cabins">Reception & Cabins Only</option>
+                                        <option value="renovation">Renovation</option>
+                                        <option value="white-label">White-label to Furnished</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Step 3: Plot & Build Details (Residential Construction) -->
+                            <div class="step" id="step3-residential-construction">
+                                <h3 class="h4 fw-700 text-dark-gray mb-4">Plot & Build Details</h3>
+                                <div class="row">
+                                    <div class="col-md-6 mb-4">
+                                        <label for="plot-area-rc" class="form-label fw-600">Plot Area (sq ft)</label>
+                                        <input type="number" class="form-control" id="plot-area-rc" placeholder="Enter plot area in sq ft" min="1">
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <label for="floors-rc" class="form-label fw-600">Number of Floors</label>
+                                        <select class="form-select" id="floors-rc">
+                                            <option value="">Select Floors</option>
+                                            <option value="ground">Ground Floor</option>
+                                            <option value="g1">G+1</option>
+                                            <option value="g2">G+2</option>
+                                            <option value="g3">G+3</option>
+                                            <option value="g4">G+4+</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-4">
+                                        <label for="builtup-area-rc" class="form-label fw-600">Total Built-up Area (sq ft)</label>
+                                        <input type="number" class="form-control" id="builtup-area-rc" placeholder="Enter built-up area in sq ft" min="1">
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <label for="location-rc" class="form-label fw-600">City/Location</label>
+                                        <select class="form-select" id="location-rc">
+                                            <option value="">Select City</option>
+                                            <option value="mumbai">Mumbai</option>
+                                            <option value="delhi">Delhi</option>
+                                            <option value="bangalore">Bangalore</option>
+                                            <option value="chennai">Chennai</option>
+                                            <option value="kolkata">Kolkata</option>
+                                            <option value="hyderabad">Hyderabad</option>
+                                            <option value="pune">Pune</option>
+                                            <option value="ahmedabad">Ahmedabad</option>
+                                            <option value="jaipur">Jaipur</option>
+                                            <option value="surat">Surat</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Step 3: Building Details (Commercial Construction) -->
+                            <div class="step" id="step3-commercial-construction">
+                                <h3 class="h4 fw-700 text-dark-gray mb-4">Building Details</h3>
+                                <div class="row">
+                                    <div class="col-md-6 mb-4">
+                                        <label for="building-type-cc" class="form-label fw-600">Building Type</label>
+                                        <select class="form-select" id="building-type-cc">
+                                            <option value="">Select Type</option>
+                                            <option value="office-building">Office Building</option>
+                                            <option value="warehouse">Warehouse</option>
+                                            <option value="retail-complex">Retail Complex</option>
+                                            <option value="school">School</option>
+                                            <option value="hospital">Hospital</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <label for="plot-area-cc" class="form-label fw-600">Plot Area (sq ft)</label>
+                                        <input type="number" class="form-control" id="plot-area-cc" placeholder="Enter plot area in sq ft" min="1">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-4">
+                                        <label for="floors-cc" class="form-label fw-600">Number of Floors</label>
+                                        <input type="number" class="form-control" id="floors-cc" placeholder="Enter number of floors" min="1">
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <label for="builtup-area-cc" class="form-label fw-600">Total Built-up Area (sq ft)</label>
+                                        <input type="number" class="form-control" id="builtup-area-cc" placeholder="Enter built-up area in sq ft" min="1">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Step 4: Room & Item Selection (Residential Interiors) -->
+                            <div class="step" id="step4-residential-interiors">
+                                <h3 class="h4 fw-700 text-dark-gray mb-4">Room & Item Selection</h3>
+                                <div id="room-selection-ri">
+                                    <!-- Dynamic content will be added here based on BHK selection -->
+                                </div>
+                            </div>
+
+                            <!-- Step 4: Space & Item Selection (Commercial Interiors) -->
+                            <div class="step" id="step4-commercial-interiors">
+                                <h3 class="h4 fw-700 text-dark-gray mb-4">Space & Item Selection</h3>
+                                <div id="space-selection-ci">
+                                    <!-- Dynamic content will be added here -->
+                                </div>
+                            </div>
+
+                            <!-- Step 4: Package & Quality (Residential Construction) -->
+                            <div class="step" id="step4-residential-construction">
+                                <h3 class="h4 fw-700 text-dark-gray mb-4">Choose your construction package</h3>
+                                <div class="row">
+                                    <div class="col-md-4 mb-4">
+                                        <div class="form-check custom-radio">
+                                            <input class="form-check-input" type="radio" name="package-rc" id="basic-rc" value="basic">
+                                            <label class="form-check-label" for="basic-rc">
+                                                <div class="card h-100 border-0 box-shadow-medium">
+                                                    <div class="card-body text-center p-4">
+                                                        <h5 class="card-title fw-600">Basic Package</h5>
+                                                        <p class="card-text small">~₹1500/sq ft - Standard quality materials, basic finishes</p>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-4">
+                                        <div class="form-check custom-radio">
+                                            <input class="form-check-input" type="radio" name="package-rc" id="standard-rc" value="standard">
+                                            <label class="form-check-label" for="standard-rc">
+                                                <div class="card h-100 border-0 box-shadow-medium">
+                                                    <div class="card-body text-center p-4">
+                                                        <h5 class="card-title fw-600">Standard Package</h5>
+                                                        <p class="card-text small">~₹1800/sq ft - Branded materials, better quality finishes</p>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-4">
+                                        <div class="form-check custom-radio">
+                                            <input class="form-check-input" type="radio" name="package-rc" id="premium-rc" value="premium">
+                                            <label class="form-check-label" for="premium-rc">
+                                                <div class="card h-100 border-0 box-shadow-medium">
+                                                    <div class="card-body text-center p-4">
+                                                        <h5 class="card-title fw-600">Premium Package</h5>
+                                                        <p class="card-text small">~₹2200+/sq ft - Top-tier branded materials, premium finishes</p>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Step 4: Type of Construction (Commercial Construction) -->
+                            <div class="step" id="step4-commercial-construction">
+                                <h3 class="h4 fw-700 text-dark-gray mb-4">Type of Construction</h3>
+                                <div class="row">
+                                    <div class="col-md-6 mb-4">
+                                        <label for="structural-system-cc" class="form-label fw-600">Structural System</label>
+                                        <select class="form-select" id="structural-system-cc">
+                                            <option value="">Select System</option>
+                                            <option value="rcc">RCC Framed Structure</option>
+                                            <option value="steel">Steel Framed Structure</option>
+                                            <option value="peb">Pre-Engineered Building (PEB)</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <label for="scope-cc" class="form-label fw-600">Scope of Work</label>
+                                        <select class="form-select" id="scope-cc">
+                                            <option value="">Select Scope</option>
+                                            <option value="core-shell">Core & Shell</option>
+                                            <option value="warm-shell">Warm Shell</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Step 5: Finish & Material Grade (Residential Interiors) -->
+                            <div class="step" id="step5-residential-interiors">
+                                <h3 class="h4 fw-700 text-dark-gray mb-4">Choose your preferred finish quality</h3>
+                                <div class="row">
+                                    <div class="col-md-4 mb-4">
+                                        <div class="form-check custom-radio">
+                                            <input class="form-check-input" type="radio" name="finish-ri" id="essentials-ri" value="essentials">
+                                            <label class="form-check-label" for="essentials-ri">
+                                                <div class="card h-100 border-0 box-shadow-medium">
+                                                    <div class="card-body text-center p-4">
+                                                        <h5 class="card-title fw-600">Essentials (Basic)</h5>
+                                                        <p class="card-text small">Standard Laminates, Basic Hardware. Cost-effective and functional.</p>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-4">
+                                        <div class="form-check custom-radio">
+                                            <input class="form-check-input" type="radio" name="finish-ri" id="premium-ri" value="premium">
+                                            <label class="form-check-label" for="premium-ri">
+                                                <div class="card h-100 border-0 box-shadow-medium">
+                                                    <div class="card-body text-center p-4">
+                                                        <h5 class="card-title fw-600">Premium (Mid-Range)</h5>
+                                                        <p class="card-text small">High-Gloss Laminates, Acrylic, Soft-close Hardware, Basic Automation.</p>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-4">
+                                        <div class="form-check custom-radio">
+                                            <input class="form-check-input" type="radio" name="finish-ri" id="luxe-ri" value="luxe">
+                                            <label class="form-check-label" for="luxe-ri">
+                                                <div class="card h-100 border-0 box-shadow-medium">
+                                                    <div class="card-body text-center p-4">
+                                                        <h5 class="card-title fw-600">Luxe (High-End)</h5>
+                                                        <p class="card-text small">Veneers, Lacquered Glass, Premium Branded Hardware, Advanced Automation.</p>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Step 5: Grade of Fit-out (Commercial Interiors) -->
+                            <div class="step" id="step5-commercial-interiors">
+                                <h3 class="h4 fw-700 text-dark-gray mb-4">Choose the grade of your commercial fit-out</h3>
+                                <div class="row">
+                                    <div class="col-md-4 mb-4">
+                                        <div class="form-check custom-radio">
+                                            <input class="form-check-input" type="radio" name="fitout-ci" id="grade-c-ci" value="grade-c">
+                                            <label class="form-check-label" for="grade-c-ci">
+                                                <div class="card h-100 border-0 box-shadow-medium">
+                                                    <div class="card-body text-center p-4">
+                                                        <h5 class="card-title fw-600">Grade C (Basic)</h5>
+                                                        <p class="card-text small">Standard materials, functional design, ideal for startups.</p>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-4">
+                                        <div class="form-check custom-radio">
+                                            <input class="form-check-input" type="radio" name="fitout-ci" id="grade-b-ci" value="grade-b">
+                                            <label class="form-check-label" for="grade-b-ci">
+                                                <div class="card h-100 border-0 box-shadow-medium">
+                                                    <div class="card-body text-center p-4">
+                                                        <h5 class="card-title fw-600">Grade B (Mid-Range)</h5>
+                                                        <p class="card-text small">Good quality materials, better aesthetics, suitable for established businesses.</p>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-4">
+                                        <div class="form-check custom-radio">
+                                            <input class="form-check-input" type="radio" name="fitout-ci" id="grade-a-ci" value="grade-a">
+                                            <label class="form-check-label" for="grade-a-ci">
+                                                <div class="card h-100 border-0 box-shadow-medium">
+                                                    <div class="card-body text-center p-4">
+                                                        <h5 class="card-title fw-600">Grade A (Premium)</h5>
+                                                        <p class="card-text small">High-end materials, custom branding, superior ergonomics and design.</p>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Step 5: Additional Inclusions (Residential Construction) -->
+                            <div class="step" id="step5-residential-construction">
+                                <h3 class="h4 fw-700 text-dark-gray mb-4">Additional Inclusions</h3>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="basement-rc" value="basement">
+                                            <label class="form-check-label" for="basement-rc">Basement Construction</label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="boundary-wall-rc" value="boundary-wall">
+                                            <label class="form-check-label" for="boundary-wall-rc">Boundary Wall / Compound Wall</label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="sump-rc" value="sump">
+                                            <label class="form-check-label" for="sump-rc">Underground Sump / Water Tank</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="landscaping-rc" value="landscaping">
+                                            <label class="form-check-label" for="landscaping-rc">Landscaping & Exterior Work</label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="solar-rc" value="solar">
+                                            <label class="form-check-label" for="solar-rc">Solar Panels</label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="elevator-rc" value="elevator">
+                                            <label class="form-check-label" for="elevator-rc">Elevator / Lift</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Step 5: Additional Systems & Features (Commercial Construction) -->
+                            <div class="step" id="step5-commercial-construction">
+                                <h3 class="h4 fw-700 text-dark-gray mb-4">Additional Systems & Features</h3>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="basement-cc" value="basement">
+                                            <label class="form-check-label" for="basement-cc">Basement/Parking Levels</label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="facade-cc" value="facade">
+                                            <label class="form-check-label" for="facade-cc">Facade Type (Glass Curtain Wall, Cladding, etc.)</label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="elevators-cc" value="elevators">
+                                            <label class="form-check-label" for="elevators-cc">Elevators & Lifts</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="hvac-cc" value="hvac">
+                                            <label class="form-check-label" for="hvac-cc">Large Scale HVAC System</label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="fire-safety-cc" value="fire-safety">
+                                            <label class="form-check-label" for="fire-safety-cc">Fire Fighting System</label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="site-dev-cc" value="site-dev">
+                                            <label class="form-check-label" for="site-dev-cc">Site Development & Paving</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Step 6: Additional Services (Residential Interiors) -->
+                            <div class="step" id="step6-residential-interiors">
+                                <h3 class="h4 fw-700 text-dark-gray mb-4">Additional Services</h3>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="painting-ri" value="painting">
+                                            <label class="form-check-label" for="painting-ri">Full House Painting</label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="electrical-ri" value="electrical">
+                                            <label class="form-check-label" for="electrical-ri">Electrical Work (new wiring, fixtures)</label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="plumbing-ri" value="plumbing">
+                                            <label class="form-check-label" for="plumbing-ri">Plumbing Work</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="civil-ri" value="civil">
+                                            <label class="form-check-label" for="civil-ri">Civil Work (tiling, wall changes)</label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="automation-ri" value="automation">
+                                            <label class="form-check-label" for="automation-ri">Home Automation</label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="furniture-ri" value="furniture">
+                                            <label class="form-check-label" for="furniture-ri">Loose Furniture Sourcing</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Step 6: MEP & Other Services (Commercial Interiors) -->
+                            <div class="step" id="step6-commercial-interiors">
+                                <h3 class="h4 fw-700 text-dark-gray mb-4">MEP & Other Services</h3>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="hvac-ci" value="hvac">
+                                            <label class="form-check-label" for="hvac-ci">HVAC (Heating, Ventilation, and Air Conditioning)</label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="electrical-ci" value="electrical">
+                                            <label class="form-check-label" for="electrical-ci">Electrical & Lighting</label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="networking-ci" value="networking">
+                                            <label class="form-check-label" for="networking-ci">Networking & Data Cabling</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="security-ci" value="security">
+                                            <label class="form-check-label" for="security-ci">Fire Safety & Security Systems (CCTV, Access Control)</label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="flooring-ci" value="flooring">
+                                            <label class="form-check-label" for="flooring-ci">Flooring (Carpet, Vinyl, Tile)</label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="signage-ci" value="signage">
+                                            <label class="form-check-label" for="signage-ci">Signage & Branding</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Step 6: Summary & Contact Form -->
+                            <div class="step" id="step6-summary">
+                                <h3 class="h4 fw-700 text-dark-gray mb-4">Summary & Get Estimate</h3>
+                                <div class="row">
+                                    <div class="col-lg-6 mb-4">
+                                        <h5 class="fw-600 text-dark-gray mb-3">Your Selections</h5>
+                                        <div id="summary-content" class="bg-light p-3 border-radius-4px">
+                                            <!-- Summary will be populated here -->
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <h5 class="fw-600 text-dark-gray mb-3">Get Your Detailed Estimate Instantly</h5>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <input type="text" class="form-control" id="contact-name" placeholder="Your Name">
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <input type="email" class="form-control" id="contact-email" placeholder="Your Email">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <input type="tel" class="form-control" id="contact-phone" placeholder="Your Phone">
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <input type="text" class="form-control" id="contact-city" placeholder="Your City">
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn btn-gradient-purple-pink w-100" id="get-estimate-btn">View My Estimated Cost</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Budget Result -->
+                            <div class="step" id="step7-result">
+                                <h3 class="h4 fw-700 text-dark-gray mb-4">Your Budget Estimate</h3>
+                                <div id="budgetResult" class="text-center p-4 bg-light border-radius-4px">
+                                    <div class="spinner-border text-primary" role="status" id="loadingSpinner">
+                                        <span class="visually-hidden">Calculating...</span>
+                                    </div>
+                                    <div id="resultContent" style="display: none;">
+                                        <h4 class="fw-700 text-gradient-dark-purple-watermelon mb-3" id="estimatedBudget"></h4>
+                                        <p class="mb-3" id="budgetRange"></p>
+                                        <p class="small text-muted">* This is an approximate estimate. Actual costs may vary based on material quality, labor rates, and specific requirements.</p>
+                                        <div class="mt-4">
+                                            <button class="btn btn-outline-dark-gray me-2" onclick="resetCalculator()">Calculate Again</button>
+                                            <button class="btn btn-gradient-purple-pink" onclick="contactUs()">Contact Us</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Navigation Buttons -->
+                            <div class="d-flex justify-content-between mt-6">
+                                <button type="button" class="btn btn-outline-dark-gray" id="prevBtn" style="display: none;">Previous</button>
+                                <button type="button" class="btn btn-gradient-purple-pink" id="nextBtn">Next</button>
+                            </div>
                         </div>
-                    </div>
-                    <!-- end images box -->
-                    <!-- start images box -->
-                    <div class="col text-center md-mb-50px"> 
-                        <img class="w-70" src="https://placehold.co/375x415" alt="" />
-                        <div class="mt-30px">
-                            <img src="https://placehold.co/35x35" alt="" />
-                            <span class="fs-18 fw-700 text-dark-gray mt-10px d-block">Grey</span>
-                        </div>
-                    </div>
-                    <!-- end images box -->
-                    <!-- start images box -->
-                    <div class="col text-center xs-mb-50px"> 
-                        <img class="w-70" src="https://placehold.co/375x415" alt="" />
-                        <div class="mt-30px">
-                            <img src="https://placehold.co/35x35" alt="" />
-                            <span class="fs-18 fw-700 text-dark-gray mt-10px d-block">Pink</span>
-                        </div>
-                    </div>
-                    <!-- end images box -->
-                    <!-- start images box -->
-                    <div class="col text-center"> 
-                        <img class="w-70" src="https://placehold.co/375x415" alt="" />
-                        <div class="mt-30px">
-                            <img src="https://placehold.co/35x35" alt="" />
-                            <span class="fs-18 fw-700 text-dark-gray mt-10px d-block">Blue</span>
-                        </div>
-                    </div>
-                    <!-- end images box -->
-                </div>
-                <div class="row justify-content-center mt-6 sm-mt-11" data-anime='{ "el": "childs", "translateY": [0, 0], "opacity": [0,1], "duration": 1200, "delay": 0, "staggervalue": 150, "easing": "easeOutQuad" }'>
-                    <div class="col-md-4 p-0">
-                        <span class="bg-dark-gray w-100 fs-30 p-7 sm-p-5 fw-700 text-white text-center d-inline-block">Just $999</span>
-                    </div>
-                    <div class="col-md-4 p-0">
-                        <a href="https://www.amazon.com/" target="_blank" class="btn btn-gradient-purple-pink w-100 fs-30 border-0 p-7 sm-p-5 fw-700 text-uppercase-inherit">Purchase now</a>
-                    </div>
-                    <div class="col-12 mt-30px">
-                        <!-- start list style -->
-                        <ul class="list-style-05 text-center text-uppercase ls-1px fs-16 fw-500">
-                            <li>Secure</li>
-                            <li>Free</li>
-                            <li>Contactless delivery</li> 
-                        </ul>
-                        <!-- end list style -->
                     </div>
                 </div>
             </div>
@@ -2232,6 +2913,480 @@
                 });
             });
 
+        </script>
+        <!-- Budget Calculator Script -->
+        <script type="text/javascript">
+            document.addEventListener('DOMContentLoaded', function() {
+                let currentStep = 1;
+                let totalSteps = 7;
+                let currentPath = {
+                    projectType: null, // 'interiors' or 'construction'
+                    propertyType: null, // 'residential' or 'commercial'
+                    stepMap: [] // Array of step IDs to show
+                };
+
+                const steps = Array.from(document.querySelectorAll('.step'));
+                const stepIndicators = Array.from(document.querySelectorAll('.step-indicator'));
+                const progressBar = document.getElementById('progressBar');
+                const prevBtn = document.getElementById('prevBtn');
+                const nextBtn = document.getElementById('nextBtn');
+                const getEstimateBtn = document.getElementById('get-estimate-btn');
+
+                // Step mappings for different paths
+                const stepMappings = {
+                    'interiors-residential': [
+                        'step1', 'step2', 'step3-residential-interiors', 'step4-residential-interiors',
+                        'step5-residential-interiors', 'step6-residential-interiors', 'step6-summary', 'step7-result'
+                    ],
+                    'interiors-commercial': [
+                        'step1', 'step2', 'step3-commercial-interiors', 'step4-commercial-interiors',
+                        'step5-commercial-interiors', 'step6-commercial-interiors', 'step6-summary', 'step7-result'
+                    ],
+                    'construction-residential': [
+                        'step1', 'step2', 'step3-residential-construction', 'step4-residential-construction',
+                        'step5-residential-construction', 'step6-summary', 'step7-result'
+                    ],
+                    'construction-commercial': [
+                        'step1', 'step2', 'step3-commercial-construction', 'step4-commercial-construction',
+                        'step5-commercial-construction', 'step6-summary', 'step7-result'
+                    ]
+                };
+
+                function updateStepTitles() {
+                    const step2Title = document.getElementById('step2-title');
+                    const residentialTitle = document.getElementById('residential-title');
+                    const residentialSubtitle = document.getElementById('residential-subtitle');
+                    const commercialTitle = document.getElementById('commercial-title');
+                    const commercialSubtitle = document.getElementById('commercial-subtitle');
+
+                    if (!step2Title) return;
+
+                    if (currentPath.projectType === 'interiors') {
+                        step2Title.textContent = 'What kind of property is this for?';
+                        if (residentialTitle) residentialTitle.textContent = 'Residential';
+                        if (residentialSubtitle) residentialSubtitle.textContent = 'Homes, apartments, and personal spaces';
+                        if (commercialTitle) commercialTitle.textContent = 'Commercial';
+                        if (commercialSubtitle) commercialSubtitle.textContent = 'Offices, shops, and business spaces';
+                    } else if (currentPath.projectType === 'construction') {
+                        step2Title.textContent = 'What kind of property are you constructing?';
+                        if (residentialTitle) residentialTitle.textContent = 'Residential';
+                        if (residentialSubtitle) residentialSubtitle.textContent = 'Independent House, Villa, Farmhouse';
+                        if (commercialTitle) commercialTitle.textContent = 'Commercial';
+                        if (commercialSubtitle) commercialSubtitle.textContent = 'Building, Warehouse, Factory';
+                    }
+                }
+
+                function getActiveStepMap() {
+                    if (currentPath.stepMap && Array.isArray(currentPath.stepMap) && currentPath.stepMap.length) return currentPath.stepMap;
+                    const fallback = steps.map(s => s.id).filter(id => id && id.startsWith('step')).slice(0, 6);
+                    return fallback.length ? fallback : ['step1','step2','step3-residential-interiors','step4-residential-interiors','step5-residential-interiors','step6-residential-interiors'];
+                }
+
+                function updateUI() {
+                    // Hide all steps first
+                    steps.forEach(step => step.classList.remove('active'));
+
+                    const activeMap = getActiveStepMap();
+                    if (currentStep < 1) currentStep = 1;
+                    if (currentStep > activeMap.length) currentStep = activeMap.length;
+
+                    const currentStepId = activeMap[currentStep - 1] || 'step1';
+                    const currentStepElement = document.getElementById(currentStepId);
+                    if (currentStepElement) {
+                        currentStepElement.classList.add('active');
+                    } else {
+                        const el = document.getElementById('step1');
+                        if (el) el.classList.add('active');
+                    }
+
+                    // Update indicators
+                    stepIndicators.forEach((indicator, index) => {
+                        indicator.classList.toggle('active', index === currentStep - 1);
+                    });
+
+                    const effectiveTotal = activeMap.length || totalSteps;
+                    const progress = Math.round((currentStep / (effectiveTotal || 1)) * 100);
+                    if (progressBar) progressBar.style.width = progress + '%';
+
+                    if (prevBtn) prevBtn.style.display = currentStep > 1 ? 'inline-block' : 'none';
+
+                    if (nextBtn && getEstimateBtn) {
+                        if (currentStep === effectiveTotal - 1) {
+                            nextBtn.style.display = 'none';
+                            getEstimateBtn.style.display = 'inline-block';
+                        } else if (currentStep >= effectiveTotal) {
+                            nextBtn.style.display = 'none';
+                            getEstimateBtn.style.display = 'none';
+                        } else {
+                            nextBtn.style.display = 'inline-block';
+                            nextBtn.textContent = 'Next';
+                            getEstimateBtn.style.display = 'none';
+                        }
+                    }
+                }
+
+                // Ensure path updates immediately when user selects project type or property type
+                const projectRadios = document.querySelectorAll('input[name="projectType"]');
+                projectRadios.forEach(r => r.addEventListener('change', () => {
+                    updatePath();
+                    currentStep = 1;
+                    updateUI();
+                }));
+
+                const propertyRadios = document.querySelectorAll('input[name="propertyType"]');
+                propertyRadios.forEach(r => r.addEventListener('change', () => {
+                    updatePath();
+                    currentStep = 2;
+                    updateUI();
+                    if (currentPath.projectType === 'interiors' && currentPath.propertyType === 'commercial') {
+                        generateSpaceSelection();
+                    }
+                }));
+
+                function validateStep(stepId) {
+                    if (!stepId) return true;
+                    const stepElement = document.getElementById(stepId);
+                    if (!stepElement) return true;
+
+                    const inputs = stepElement.querySelectorAll('input, select, textarea');
+                    let isValid = true;
+
+                    inputs.forEach(input => {
+                        if (input.type === 'radio') {
+                            const radioGroup = stepElement.querySelectorAll(`input[name="${input.name}"]`);
+                            const isChecked = Array.from(radioGroup).some(radio => radio.checked);
+                            const formCheck = input.closest ? input.closest('.form-check') : null;
+                            if (!isChecked) {
+                                isValid = false;
+                                if (formCheck) formCheck.classList.add('error');
+                            } else {
+                                if (formCheck) formCheck.classList.remove('error');
+                            }
+                        } else if (input.required && !input.value.trim()) {
+                            isValid = false;
+                            input.classList.add('is-invalid');
+                        } else {
+                            input.classList.remove('is-invalid');
+                        }
+                    });
+
+                    return isValid;
+                }
+
+                function updatePath() {
+                    const projectTypeRadio = document.querySelector('input[name="projectType"]:checked');
+                    const propertyTypeRadio = document.querySelector('input[name="propertyType"]:checked');
+
+                    currentPath.projectType = projectTypeRadio ? projectTypeRadio.value : null;
+                    currentPath.propertyType = propertyTypeRadio ? propertyTypeRadio.value : null;
+
+                    const pathKey = `${currentPath.projectType}-${currentPath.propertyType}`;
+                    currentPath.stepMap = stepMappings[pathKey] || [];
+
+                    updateStepTitles();
+                }
+
+                // (Keep original content generation and calculation functions) 
+                function attachCardHandlers(container) {
+                    // when a card is clicked, toggle the selected class and the underlying checkbox
+                    container.querySelectorAll('.item-card').forEach(card => {
+                        const inputId = card.getAttribute('data-input-id');
+                        const input = inputId ? document.getElementById(inputId) : null;
+                        card.addEventListener('click', () => {
+                            card.classList.toggle('selected');
+                            if (input) input.checked = !!card.classList.contains('selected');
+                        });
+                    });
+                    // sync initial state if inputs are pre-checked
+                    container.querySelectorAll('input[type="checkbox"]').forEach(chk => {
+                        const id = chk.id;
+                        if (id && chk.checked) {
+                            const c = container.querySelector(`.item-card[data-input-id="${id}"]`);
+                            if (c) c.classList.add('selected');
+                        }
+                    });
+                }
+
+                function generateRoomSelection() {
+                    const bhkSelect = document.getElementById('bhk');
+                    const roomSelectionDiv = document.getElementById('room-selection-ri');
+                    const selectedBHK = bhkSelect ? bhkSelect.value : null;
+
+                    if (!selectedBHK || !roomSelectionDiv) return;
+
+                    let html = '';
+
+                    const roomConfigs = {
+                        '1bhk': ['Living & Dining Area', 'Kitchen', 'Master Bedroom'],
+                        '2bhk': ['Living & Dining Area', 'Kitchen', 'Master Bedroom', 'Other Bedroom'],
+                        '3bhk': ['Living & Dining Area', 'Kitchen', 'Master Bedroom', 'Other Bedroom', 'Other Bedroom'],
+                        '4bhk': ['Living & Dining Area', 'Kitchen', 'Master Bedroom', 'Other Bedroom', 'Other Bedroom', 'Other Bedroom'],
+                        'villa': ['Living & Dining Area', 'Kitchen', 'Master Bedroom', 'Other Bedroom', 'Other Bedroom', 'Other Bedroom', 'Other Bedroom'],
+                        'penthouse': ['Living & Dining Area', 'Kitchen', 'Master Bedroom', 'Other Bedroom', 'Other Bedroom', 'Other Bedroom']
+                    };
+
+                    const rooms = roomConfigs[selectedBHK] || [];
+
+                    rooms.forEach((room, idx) => {
+                        html += `<div class="mb-4">
+                            <h6 class="fw-600 text-dark-gray mb-3">${room}</h6>
+                            <div class="item-grid" id="room-${idx}-items">`;
+
+                        let items = [];
+                        if (room === 'Living & Dining Area') {
+                            items = ['TV Unit', 'Sofa', 'Center Table', 'Dining Table', 'False Ceiling', 'Wall Paneling'];
+                        } else if (room === 'Kitchen') {
+                            items = ['Modular Kitchen', 'Loft', 'Breakfast Counter', 'Kitchen Island'];
+                        } else if (room.includes('Bedroom')) {
+                            items = ['Wardrobe', 'Loft', 'Bed with Storage', 'Bedside Tables', 'Dressing Unit', 'Study Table', 'False Ceiling'];
+                        }
+
+                        items.forEach((item, i) => {
+                            const safeId = `ri-${idx}-${i}`;
+                            const icon = getIconForItem(item);
+                            html += `<div class="col-item">
+                                <div class="item-card" data-input-id="${safeId}">
+                                    <div class="icon-wrap">${icon}</div>
+                                    <span class="item-label">${item}</span>
+                                    <span class="checkmark">✓</span>
+                                </div>
+                                <input type="checkbox" id="${safeId}" value="${item}" style="display:none;" />
+                            </div>`;
+                        });
+
+                        html += `</div></div>`;
+                    });
+
+                    roomSelectionDiv.innerHTML = html;
+                    // attach click handlers
+                    attachCardHandlers(roomSelectionDiv);
+                }
+
+                function generateSpaceSelection() {
+                    const spaceSelectionDiv = document.getElementById('space-selection-ci');
+                    if (!spaceSelectionDiv) return;
+
+                    const spaces = [
+                        { name: 'Reception & Waiting Area', items: ['Reception Desk', 'Backdrop Wall', 'Guest Seating', 'False Ceiling'] },
+                        { name: 'Workstation Area', items: ['Linear Workstations', 'Cubicle Workstations', 'Electrical Raceways', 'Storage Cabinets'], hasInput: true, inputLabel: 'Number of Workstations' },
+                        { name: 'Cabins & Manager Rooms', items: ['Manager Table', 'Back Storage', 'Visitor Chairs', 'Glass Partitions'], hasInput: true, inputLabel: 'Number of Cabins' },
+                        { name: 'Meeting & Conference Rooms', items: ['Conference Table', 'TV/Projector Wall', 'Acoustic Paneling', 'Whiteboard Wall'], hasInput: true, inputLabel: 'Number of Rooms' },
+                        { name: 'Pantry/Cafeteria', items: ['Counter with Sink', 'Overhead & Under-counter Cabinets', 'Seating Area'] }
+                    ];
+
+                    let html = '';
+
+                    spaces.forEach((space, spaceIndex) => {
+                        html += `<div class="mb-4">
+                            <h6 class="fw-600 text-dark-gray mb-3">${space.name}</h6>
+                            <div class="item-grid" id="space-${spaceIndex}-items">`;
+
+                        if (space.hasInput) {
+                            html += `<div class="col-item">
+                                <label for="input-${spaceIndex}" class="form-label fw-600">${space.inputLabel}</label>
+                                <input type="number" class="form-control" id="input-${spaceIndex}" min="0">
+                            </div>`;
+                        }
+
+                        space.items.forEach((item, i) => {
+                            const safeId = `ci-${spaceIndex}-${i}`;
+                            const icon = getIconForItem(item);
+                            html += `<div class="col-item">
+                                <div class="item-card" data-input-id="${safeId}">
+                                    <div class="icon-wrap">${icon}</div>
+                                    <span class="item-label">${item}</span>
+                                    <span class="checkmark">✓</span>
+                                </div>
+                                <input type="checkbox" id="${safeId}" value="${item}" style="display:none;" />
+                            </div>`;
+                        });
+
+                        html += `</div></div>`;
+                    });
+
+                    spaceSelectionDiv.innerHTML = html;
+                    attachCardHandlers(spaceSelectionDiv);
+                }
+
+                function getIconForItem(itemName) {
+                    // Return a small inline SVG or icon markup per item keyword. Keep simple and generic.
+                    const k = itemName.toLowerCase();
+                    if (k.includes('sofa') || k.includes('seating')) return '<img src="images/sofa.png" alt="sofa"/>';
+                    if (k.includes('tv') || k.includes('projector') || k.includes('tv/')) return '<img src="images/plan.png" alt="tv"/>';
+                    if (k.includes('desk') || k.includes('table')) return '<img src="images/table.png" alt="table"/>';
+                    if (k.includes('wardrobe') || k.includes('storage') || k.includes('cabinet')) return '<img src="images/desk.png" alt="storage"/>';
+                    if (k.includes('kitchen') || k.includes('counter')) return '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="6" width="20" height="12" rx="2" stroke="#666" stroke-width="1.2" fill="#f7f7f7"/><rect x="4" y="8" width="6" height="6" rx="1" fill="#e9e9e9"/><rect x="12" y="8" width="8" height="2" rx="1" fill="#e9e9e9"/><circle cx="7" cy="11" r="0.6" fill="#666"/></svg>';
+                    if (k.includes('false ceiling') || k.includes('ceiling')) return '<img src="images/flrlamp.png" alt="ceiling"/>';
+                    if (k.includes('wall') || k.includes('panel')) return '<img src="images/modernArt.png" alt="wall"/>';
+                    // default
+                    return '<img src="images/plan.png" alt="item"/>';
+                }
+
+                function calculateBudget() {
+                    const formData = { projectType: currentPath.projectType, propertyType: currentPath.propertyType, selections: {} };
+                    const inputs = document.querySelectorAll('input:checked, select, input[type="number"], textarea');
+                    inputs.forEach(input => {
+                        if (input.type === 'checkbox' && input.checked) {
+                            if (!formData.selections[input.name]) formData.selections[input.name] = [];
+                            formData.selections[input.name].push(input.value);
+                        } else if (input.type === 'radio' && input.checked) {
+                            formData.selections[input.name] = input.value;
+                        } else if (input.tagName === 'SELECT' || input.type === 'number' || input.tagName === 'TEXTAREA') {
+                            formData.selections[input.id] = input.value;
+                        }
+                    });
+
+                    let baseCost = 0; let multiplier = 1;
+                    if (formData.projectType === 'interiors') {
+                        if (formData.propertyType === 'residential') {
+                            baseCost = 1500; const area = parseInt(formData.selections['area-ri']) || 0; baseCost *= area;
+                            const finish = formData.selections['finish-ri']; if (finish === 'premium') multiplier = 1.5; else if (finish === 'luxe') multiplier = 2.5;
+                        } else {
+                            baseCost = 2000; const area = parseInt(formData.selections['area-ci']) || 0; baseCost *= area;
+                            const grade = formData.selections['fitout-ci']; if (grade === 'grade-b') multiplier = 1.3; else if (grade === 'grade-a') multiplier = 1.8;
+                        }
+                    } else {
+                        if (formData.propertyType === 'residential') {
+                            const pack = formData.selections['package-rc']; if (pack === 'standard') baseCost = 1800; else if (pack === 'premium') baseCost = 2200; else baseCost = 1500;
+                            const area = parseInt(formData.selections['builtup-area-rc']) || 0; baseCost *= area;
+                        } else {
+                            baseCost = 2000; const area = parseInt(formData.selections['builtup-area-cc']) || 0; baseCost *= area;
+                        }
+                    }
+
+                    const totalCost = Math.round(baseCost * multiplier);
+                    const minCost = Math.round(totalCost * 0.8);
+                    const maxCost = Math.round(totalCost * 1.2);
+
+                    const loadingEl = document.getElementById('loadingSpinner');
+                    const resultEl = document.getElementById('resultContent');
+                    if (loadingEl) loadingEl.style.display = 'block';
+                    if (resultEl) resultEl.style.display = 'none';
+
+                    setTimeout(() => {
+                        if (loadingEl) loadingEl.style.display = 'none';
+                        if (resultEl) resultEl.style.display = 'block';
+                        const est = document.getElementById('estimatedBudget');
+                        const range = document.getElementById('budgetRange');
+                        if (est) est.textContent = `₹${totalCost.toLocaleString('en-IN')}`;
+                        if (range) range.textContent = `Range: ₹${minCost.toLocaleString('en-IN')} - ₹${maxCost.toLocaleString('en-IN')}`;
+                    }, 1200);
+                }
+
+                function generateSummary() {
+                    const summaryDiv = document.getElementById('summary-content'); if (!summaryDiv) return;
+                    let summary = '<div class="p-3">';
+                    const projectType = currentPath.projectType === 'interiors' ? 'Home & Office Interiors' : 'New Construction';
+                    summary += `<div class="mb-2"><strong>Project Type:</strong> ${projectType}</div>`;
+                    const propertyType = currentPath.propertyType === 'residential' ? 'Residential' : 'Commercial';
+                    summary += `<div class="mb-2"><strong>Property Type:</strong> ${propertyType}</div>`;
+
+                    // Path-specific details
+                    if (currentPath.projectType === 'interiors' && currentPath.propertyType === 'residential') {
+                        const bhkEl = document.getElementById('bhk'); const areaEl = document.getElementById('area-ri'); const scopeEl = document.getElementById('scope-ri');
+                        const bhk = bhkEl ? bhkEl.options[bhkEl.selectedIndex].text : ''; const area = areaEl ? areaEl.value : ''; const scope = scopeEl ? scopeEl.options[scopeEl.selectedIndex].text : '';
+                        summary += `<div class="mb-2"><strong>BHK:</strong> ${bhk}</div>`;
+                        summary += `<div class="mb-2"><strong>Area:</strong> ${area} sq ft</div>`;
+                        summary += `<div class="mb-2"><strong>Scope:</strong> ${scope}</div>`;
+                    } else if (currentPath.projectType === 'interiors' && currentPath.propertyType === 'commercial') {
+                        const areaEl = document.getElementById('area-ci'); const scopeEl = document.getElementById('scope-ci');
+                        const area = areaEl ? areaEl.value : ''; const scope = scopeEl ? scopeEl.options[scopeEl.selectedIndex].text : '';
+                        summary += `<div class="mb-2"><strong>Area:</strong> ${area} sq ft</div>`;
+                        summary += `<div class="mb-2"><strong>Scope:</strong> ${scope}</div>`;
+                    }
+
+                    // List selected items from hidden inputs (rooms/spaces)
+                    const selectedItems = [];
+                    document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                        if (cb.checked) {
+                            const label = cb.value || cb.id;
+                            selectedItems.push(label);
+                        }
+                    });
+
+                    if (selectedItems.length) {
+                        summary += `<div class="mb-2"><strong>Selected Items:</strong></div><ul class="mb-0">`;
+                        selectedItems.forEach(it => summary += `<li>${it}</li>`);
+                        summary += '</ul>';
+                    } else {
+                        summary += `<div class="mb-2 text-muted"><em>No specific items selected</em></div>`;
+                    }
+
+                    summary += '</div>';
+                    summaryDiv.innerHTML = summary;
+                }
+
+                function resetCalculator() {
+                    currentStep = 1; currentPath = { projectType: null, propertyType: null, stepMap: [] }; totalSteps = 7; updateUI();
+                    document.querySelectorAll('input, select, textarea').forEach(el => {
+                        try {
+                            if (el.type === 'radio' || el.type === 'checkbox') el.checked = false; else el.value = '';
+                            el.classList.remove('is-invalid');
+                        } catch (e) { /* ignore */ }
+                    });
+                    document.querySelectorAll('.form-check').forEach(el => el.classList.remove('error'));
+                }
+
+                function contactUs() { alert('Thank you! Our team will contact you shortly with a detailed estimate.'); }
+
+                // Event listeners (safe wiring)
+                if (nextBtn) nextBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const activeMap = getActiveStepMap();
+                    const currentStepId = activeMap[currentStep - 1];
+                    if (!currentStepId || validateStep(currentStepId)) {
+                        currentStep = Math.min(currentStep + 1, activeMap.length);
+                        updatePath(); updateUI();
+                    }
+                });
+
+                if (prevBtn) prevBtn.addEventListener('click', function(e) { e.preventDefault(); if (currentStep > 1) { currentStep--; updateUI(); } });
+
+                if (getEstimateBtn) getEstimateBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // Build the summary UI first
+                    generateSummary();
+                    // Also run the budget calculation so the final estimate is ready
+                    try { calculateBudget(); } catch (err) { console.warn('calculateBudget error', err); }
+                    const activeMap = getActiveStepMap();
+                    if (currentStep < activeMap.length) currentStep = Math.min(currentStep + 1, activeMap.length);
+                    updateUI();
+                });
+
+                // Dynamic content generation binding
+                const bhkEl = document.getElementById('bhk'); if (bhkEl) bhkEl.addEventListener('change', generateRoomSelection);
+                const propCi = document.getElementById('property-type-ci'); if (propCi) propCi.addEventListener('change', generateSpaceSelection);
+
+                // Keep option cards visually in-sync with their inputs (radios using cards)
+                function updateCardSelectionForInput(input) {
+                    try {
+                        const label = document.querySelector('label[for="' + input.id + '"]') || input.nextElementSibling;
+                        const card = label ? label.querySelector('.card') : null;
+                        if (!card) return;
+                        if (input.type === 'radio') {
+                            // for radio groups, update all cards in the same name group
+                            document.querySelectorAll('input[name="' + input.name + '"]').forEach(i => {
+                                const lbl = document.querySelector('label[for="' + i.id + '"]') || i.nextElementSibling;
+                                const c = lbl ? lbl.querySelector('.card') : null;
+                                if (c) c.classList.toggle('selected', !!i.checked);
+                            });
+                        } else {
+                            card.classList.toggle('selected', !!input.checked);
+                        }
+                    } catch (e) { /* ignore */ }
+                }
+
+                // Attach listeners to form inputs that use card-like labels
+                document.querySelectorAll('.form-check-input').forEach(inp => {
+                    inp.addEventListener('change', function () { updateCardSelectionForInput(inp); });
+                    // init state
+                    updateCardSelectionForInput(inp);
+                });
+
+                // Initialize other UI state
+                try { updatePath(); } catch (e) { console.warn('updatePath init error', e); }
+                updateUI();
+            });
         </script>
         <script type="text/javascript" src="js/main.js"></script>
     </body>
