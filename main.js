@@ -3653,6 +3653,52 @@
         event.preventDefault();
     });
 
+
+// ===============================
+// Budget Calculator Step Validation
+// ===============================
+$(document).on('click', '#nextBtn', function (e) {
+    // Find the currently visible step
+    var $currentStep = $('.step:visible');
+    var $requiredFields = $currentStep.find('input, select, textarea').filter('[required], .required');
+    var isValid = true;
+    $requiredFields.each(function () {
+        var $field = $(this);
+        var value = $field.val();
+        // Remove previous invalid state
+        $field.removeClass('is-invalid');
+        // Basic validation: not empty
+        if (!value || value.trim() === '') {
+            $field.addClass('is-invalid');
+            isValid = false;
+        } else if ($field.attr('type') === 'email') {
+            var emailFormat = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+            if (!emailFormat.test(value)) {
+                $field.addClass('is-invalid');
+                isValid = false;
+            }
+        } else if ($field.attr('type') === 'tel') {
+            var telFormat = /[0-9 -()+]+$/;
+            if (!telFormat.test(value)) {
+                $field.addClass('is-invalid');
+                isValid = false;
+            }
+        }
+    });
+    if (!isValid) {
+        // Optionally, show a message
+        if ($currentStep.find('.step-error-message').length === 0) {
+            $currentStep.append('<div class="step-error-message text-danger mt-2">Please fill all required fields correctly before proceeding.</div>');
+        }
+        $currentStep.find('.step-error-message').show();
+        e.preventDefault();
+        return false;
+    } else {
+        $currentStep.find('.step-error-message').hide();
+        // Allow default next step logic to proceed
+    }
+});
+
 })(jQuery);
 
 /* ===================================
