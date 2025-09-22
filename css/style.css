@@ -1922,6 +1922,12 @@ input:focus, select:focus, textarea:focus, .form-control:focus {
   -webkit-transition: 0.3s;
   transition: 0.3s;
 }
+.swiper-button-prev, .swiper-button-next, .tp-arr-imgholder {
+  width:80px;
+  height:80px;
+  left:-20px
+}
+
 .swiper-button-prev:hover, .swiper-button-next:hover {
   opacity: 0.8;
 }
