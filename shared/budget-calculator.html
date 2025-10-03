@@ -1,14 +1,73 @@
-<!-- start section -->
-        <section id="pricing" class="bg-gradient-very-light-gray">
-            <div class="container">
-                <div class="row justify-content-center mb-4">
-                    <div class="col-xl-7 col-lg-9 text-center" data-anime='{ "el": "childs", "translateY": [50, 0], "opacity": [0,1], "duration": 1200, "delay": 0, "staggervalue": 150, "easing": "easeOutQuad" }'>
-                        <h2 class="h1 fw-800 text-dark-gray ls-minus-3px">Smart Project Budget Calculator</h2>
-                        <p class="fs-18 text-dark-gray">Get an instant estimate for your interior design or construction project in India</p>
-                    </div>
-                </div>
-                <div class="row justify-content-center">
-                    <div class="col-lg-8">
+<!-- Budget Calculator Section with Title for HTMX dynamic load -->
+<section id="pricing" class="bg-gradient-very-light-gray">
+    <div class="container">
+        <div class="row justify-content-center mb-4">
+            <div class="col-xl-7 col-lg-9 text-center">
+                <h2 class="h1 fw-800 text-dark-gray ls-minus-3px">Smart Project Budget Calculator</h2>
+                <p class="fs-18 text-dark-gray">Get an instant estimate for your interior design or construction project in India</p>
+            </div>
+        </div>
+<style>
+            .calculator-form .step {
+                display: none;
+            }
+            .calculator-form .step.active {
+                display: block;
+            }
+            .step-indicators {
+                display: flex;
+                justify-content: center;
+                gap: 10px;
+                margin-bottom: 30px;
+            }
+            .step-indicator {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: #e9ecef;
+                color: #6c757d;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 600;
+                transition: all 0.3s ease;
+            }
+            .step-indicator.active {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+            }
+            .custom-radio .form-check-input {
+                display: none;
+            }
+            .custom-radio .form-check-label {
+                cursor: pointer;
+                margin: 0;
+            }
+            .custom-radio .form-check-input:checked + .form-check-label .card {
+                border-color: #667eea;
+                box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+            }
+            .form-check.error .card {
+                border-color: #dc3545;
+            }
+            .progress {
+                height: 8px;
+                background: #e9ecef;
+                border-radius: 4px;
+            }
+            .progress-bar {
+                transition: width 0.3s ease;
+            }
+            #budgetResult {
+                min-height: 200px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        </style>
+
+            <div class="row justify-content-center">
+            <div class="col-lg-8 budget-calculator-container" id="budget-calculator-container">
                         <!-- ensure steps show/hide reliably -->
                         <style>
                             /* hide steps by default; show when .active is applied */
@@ -706,19 +765,19 @@
         <!-- end section -->
 
 <!-- Budget Calculator Script -->
-<script type="text/javascript">
-    document.addEventListener('DOMContentLoaded', function() {
-        let currentStep = 1;
-        let totalSteps = 7;
-        let currentPath = {
-            projectType: null, // 'interiors' or 'construction'
-            propertyType: null, // 'residential' or 'commercial'
-            stepMap: [] // Array of step IDs to show
-        };
+        <script src="js/budget-calculator.js"></script>
 
-        const steps = Array.from(document.querySelectorAll('.step'));
-        const stepIndicators = Array.from(document.querySelectorAll('.step-indicator'));
-        const progressBar = document.getElementById('progressBar');
-        // Additional script logic would go here
-    });
-</script>
+        </div>
+</section>
+<style>
+    /* Reduce spacing above/below calculator and above footer */
+    #pricing { margin-bottom: 0 !important; padding-bottom: 0 !important; }
+    #pricing .container { padding-bottom: 0 !important; }
+    #pricing + section, #pricing + div { margin-top: 0 !important; padding-top: 0 !important; }
+    footer { margin-top: 0 !important; }
+
+    /* Add space below calculator before contact/footer */
+    .budget-calculator-container {
+        margin-bottom: 40px !important;
+    }
+</style>

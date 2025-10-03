@@ -1,6 +1,8 @@
 <!doctype html>
 <html class="no-js" lang="en">
     <head>
+    <!-- HTMX CDN for dynamic includes -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
         <title>SJ-INFRA</title>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -8,7 +10,7 @@
         <meta name="viewport" content="width=device-width,initial-scale=1.0" />
         <meta name="description" content="Elevate your online presence with Crafto - a modern, versatile, multipurpose Bootstrap 5 responsive HTML5, SCSS template using highly creative 52+ ready demos.">
         <!-- favicon icon -->
-        <link rel="shortcut icon" href="images/favicon.png">
+        <link rel="shortcut icon" href="images/sj-infra-logo.png">
         <link rel="apple-touch-icon" href="images/apple-touch-icon-57x57.png">
         <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
         <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
@@ -18,13 +20,28 @@
         <!-- slider revolution CSS files -->
         <link rel="stylesheet" type="text/css" href="revolution/css/settings.css">
         <link rel="stylesheet" type="text/css" href="revolution/css/layers.css">
+        <script>
+          function setupBudgetCalculatorHtmxInit() {
+            document.body.addEventListener('htmx:afterSwap', function(evt) {
+              if (evt.target && evt.target.id === 'budget-calculator-container' && window.budgetCalculatorInit) {
+                window.budgetCalculatorInit();
+              }
+            });
+          }
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setupBudgetCalculatorHtmxInit);
+          } else {
+            setupBudgetCalculatorHtmxInit();
+          }
+        </script>
         <link rel="stylesheet" type="text/css" href="revolution/css/navigation.css">
         <!-- style sheets and font icons  -->
         <link rel="stylesheet" href="css/vendors.min.css"/>
         <link rel="stylesheet" href="css/icon.min.css"/>
         <link rel="stylesheet" href="css/style.css"/>
-        <link rel="stylesheet" href="css/responsive.css"/>
-        <link rel="stylesheet" href="demos/product-showcase/product-showcase.css" />
+    <link rel="stylesheet" href="css/responsive.css"/>
+    <link rel="stylesheet" href="demos/product-showcase/product-showcase.css" />
+    <script src="js/budget-calculator.js"></script>
         <style>
             /* Custom arrow styles for Revolution Slider */
             .tp-arr-allwrapper .custom-arrow {
@@ -191,53 +208,11 @@
         </style>
     </head>
     <body data-mobile-nav-style="classic">
-        <!-- start header -->
-        <header> 
-            <!-- start navigation -->
-            <nav class="navbar navbar-expand-lg header-light bg-transparent header-reverse glass-effect" data-header-hover="light">
-                <div class="container-fluid">
-                    <div class="col-auto col-lg-2 me-lg-0 me-auto">
-                        <a class="navbar-brand section-link" href="#home">
-                            <img src="images/sj-infra-logo.png" data-at2x="images/demo-product-showcase-logo@2x.png" alt="" class="default-logo">
-                            <img src="images/sj-infra-logo.png" data-at2x="images/demo-product-showcase-logo@2x.png" alt="" class="alt-logo">
-                            <img src="images/sj-infra-logo.png" data-at2x="images/demo-product-showcase-logo@2x.png" alt="" class="mobile-logo"> 
-                        </a>
-                    </div>
-                    <div class="col-auto menu-order position-static">
-                        <button class="navbar-toggler float-start" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-label="Toggle navigation">
-                            <span class="navbar-toggler-line"></span>
-                            <span class="navbar-toggler-line"></span>
-                            <span class="navbar-toggler-line"></span>
-                            <span class="navbar-toggler-line"></span>
-                        </button>
-                        <div class="collapse navbar-collapse" id="navbarNav"> 
-                            <ul class="navbar-nav"> 
-                                <li class="nav-item"><a href="#overview" class="inner-link nav-link">Overview</a></li>
-                                <li class="nav-item"><a href="#features" class="inner-link nav-link">Services</a></li>
-                                <li class="nav-item"><a href="#technology" class="inner-link nav-link">Process</a></li>
-                                <li class="nav-item"><a href="#design" class="inner-link nav-link">Design</a></li>
-                                <li class="nav-item"><a href="#review" class="inner-link nav-link">Review</a></li>
-                                <li class="nav-item"><a href="#pricing" class="inner-link nav-link">Quotation</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-auto col-lg-2 text-end d-none d-sm-flex">
-                        <div class="header-icon"> 
-                            <div class="header-button">
-                                <a href="#pricing" class="btn btn-very-small left-icon btn-rounded btn-box-shadow btn-switch-text btn-dark-gray section-link">
-                                    <span>
-                                        <span class="d-none d-xl-inline-block"><i class="bi bi-bag-check fs-16"></i></span>
-                                        <span class="btn-double-text" data-text="Contact Us">Contact Us</span>
-                                    </span>
-                                </a>
-                            </div>
-                        </div>  
-                    </div>
-                </div>
-            </nav>
-            <!-- end navigation -->
-        </header>
-        <!-- end header -->
+
+    <!-- start header -->
+    <div hx-get="shared/header.html" hx-trigger="load" hx-swap="outerHTML"></div>
+    <!-- end header -->
+
        <section id="home" class="p-0 ipad-top-space-margin" style="background-image: url();">
             <article class="content">
                 <div id="rev_slider_31_1_wrapper" class="rev_slider_wrapper fullwidthbanner-container">
@@ -1638,6 +1613,7 @@
             </div>
         </section>
         <!-- end section -->
+
         <!-- start section -->  
        <section id="features" class="bg-gradient-very-light-gray position-relative pb-2"
          style="min-height: 100vh; position: relative;">
@@ -1750,6 +1726,7 @@
             </div>
         </section>
         <!-- end section -->
+
         <!-- start section --> 
         <section id="technology" class="background-position-center-top position-relative" style="background-image: url('images/vertical-line-bg-medium-gray.svg')">
             <div id="particles-02" data-particle="true" data-particle-options='{"particles": {"number": {"value": 3,"density": {"enable": true,"value_area": 1000}},"color":{"value":["#ff5b74", "#820f89"]},"shape": {"type": "circle","stroke":{"width":0,"color":"#000000"}},"opacity": {"value": 0.7,"random": false,"anim": {"enable": false,"speed": 2,"sync": false}},"size": {"value": 7,"random": true,"anim": {"enable": false,"sync": true}},"move": {"enable": true,"speed":2,"direction": "right","random": false,"straight": false}},"interactivity": {"detect_on": "canvas","events": {"onhover": {"enable": false,"mode": "repulse"},"onclick": {"enable": false,"mode": "push"},"resize": true}},"retina_detect": false}' class="position-absolute top-0px left-0px w-100 z-index-minus-1"></div>
@@ -1819,6 +1796,7 @@
             </div>
         </section>
         <!-- end section -->
+
         <!-- start section -->
         <section class="background-position-center-top pt-0" style="background-image: url('images/vertical-line-bg-medium-gray.svg')">
             <div class="container-fluid">
@@ -1861,6 +1839,7 @@
             </div>
         </section>
         <!-- end section -->
+
         <!-- start section -->   
         <section id="design" class="overflow-hidden bg-black background-position-center-top background-no-repeat pt-15 sm-pt-50px position-relative" style="background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('images/Bg_above_footer.jpg');">
             <div class="container-fluid">
@@ -2000,6 +1979,7 @@
             </div>
         </section>
         <!-- end section -->
+
         <!-- start section -->
         <section class="bg-dark-gray-01 p-35px"> 
             <div class="container">
@@ -2018,6 +1998,7 @@
             </div>
         </section>
         <!-- end section -->
+
         <!-- start section -->
         <section id="review" class="background-position-center-top" style="background-image: url('images/vertical-line-bg-medium-gray.svg')">
             <div class="container">
@@ -2104,6 +2085,7 @@
             </div>
         </section>
         <!-- end section -->
+
         <!-- start section -->
         <section id="pricing" class="bg-gradient-very-light-gray">
             <div class="container">
@@ -2808,7 +2790,8 @@
                 </div>
             </div>
         </section>  
-        <!-- end section -->
+
+
         <!-- start section -->
         <section class="py-0">
             <div class="container">
@@ -2834,31 +2817,11 @@
             </div>
         </section>
         <!-- end section --> 
+         
         <!-- start footer --> 
-        <footer class="pt-25px pb-25px border-top border-color-extra-medium-gray fs-16">  
-            <div class="container">
-                <div class="row align-items-center">
-                    <!-- start footer column -->
-                    <div class="col-lg-7 md-mb-10px text-center text-lg-start">  
-                        <ul class="footer-navbar lh-normal">
-                            <li class="nav-item"><a href="#overview" class="inner-link nav-link">Overview</a></li>
-                            <li class="nav-item"><a href="#features" class="inner-link nav-link">Services</a></li>
-                            <li class="nav-item"><a href="#technology" class="inner-link nav-link">Process</a></li>
-                            <li class="nav-item"><a href="#design" class="inner-link nav-link">Design</a></li>
-                            <li class="nav-item"><a href="#review" class="inner-link nav-link">Review</a></li> 
-                            <li class="nav-item"><a href="#pricing" class="inner-link nav-link">Quotation</a></li>
-                        </ul>
-                    </div>
-                    <!-- end footer column -->
-                    <!-- start footer column -->
-                    <div class="col-lg-5 last-paragraph-no-margin text-center text-lg-end">
-                        <p>&copy; All Rights reserved to <a href="https://kodemapa.co.in/" target="_blank" class="text-decoration-line-bottom text-dark-gray fw-600">KodeMapa</a></p>
-                    </div>
-                    <!-- end footer column -->
-                </div>
-            </div> 
-        </footer> 
-        <!-- end footer --> 
+        <div hx-get="shared/footer.html" hx-trigger="load" hx-swap="outerHTML"></div>
+        <!-- end footer -->
+         
         <!-- start scroll progress -->
         <div class="scroll-progress d-none d-xxl-block">
             <a href="#" class="scroll-top" aria-label="scroll">
@@ -2866,9 +2829,11 @@
             </a>
         </div>
         <!-- end scroll progress -->
+
         <!-- javascript libraries -->
         <script type="text/javascript" src="js/jquery.js"></script>
         <script type="text/javascript" src="js/vendors.min.js"></script>
+        
         <!-- slider revolution core javaScript files -->
         <script type="text/javascript" src="revolution/js/jquery.themepunch.tools.min.js"></script>
         <script type="text/javascript" src="revolution/js/jquery.themepunch.revolution.min.js"></script>
@@ -2946,7 +2911,6 @@
                     }
                 });
             });
-
         </script>
         <!-- Budget Calculator Script -->
         <script type="text/javascript">
@@ -3088,35 +3052,37 @@
 
                     // Special validation for step 4, step 5, and step 6: at least one selection must be made
                     if (stepId.startsWith('step4-') || stepId.startsWith('step5-') || stepId.startsWith('step6-')) {
-                            let valid = false;
-                            // If there are checkboxes or radios, require at least one checked
+                        let valid = false;
+                        // For commercial construction step, check selects
+                        if (stepId === 'step4-commercial-construction') {
+                            const structuralSelect = document.getElementById('structural-system-cc');
+                            const scopeSelect = document.getElementById('scope-cc');
+                            valid = (structuralSelect && structuralSelect.value) && (scopeSelect && scopeSelect.value);
+                        } else {
+                            // Prefer checkboxes if present, else radios
                             const checkboxes = stepElement.querySelectorAll('input[type="checkbox"]');
-                            const radios = stepElement.querySelectorAll('input[type="radio"]');
                             if (checkboxes.length > 0) {
                                 valid = Array.from(checkboxes).some(cb => cb.checked);
-                            } else if (radios.length > 0) {
-                                valid = Array.from(radios).some(radio => radio.checked);
                             } else {
-                                // If only selects/inputs, require all required selects/inputs to be filled
-                                const requiredFields = stepElement.querySelectorAll('select[required], input[required], textarea[required]');
-                                valid = Array.from(requiredFields).every(field => {
-                                    if (field.type === 'number') return Number(field.value) > 0;
-                                    return field.value && field.value.trim() !== '';
-                                });
-                            }
-                            let errorMsg = stepElement.querySelector('.step-error-message');
-                            if (!valid) {
-                                if (!errorMsg) {
-                                    errorMsg = document.createElement('div');
-                                    errorMsg.className = 'step-error-message text-danger mt-2';
-                                    errorMsg.textContent = 'Please select at least one item before proceeding.';
-                                    stepElement.appendChild(errorMsg);
+                                const radios = stepElement.querySelectorAll('input[type="radio"]');
+                                if (radios.length > 0) {
+                                    valid = Array.from(radios).some(radio => radio.checked);
                                 }
-                                errorMsg.style.display = 'block';
-                                return false;
-                            } else if (errorMsg) {
-                                errorMsg.style.display = 'none';
                             }
+                        }
+                        let errorMsg = stepElement.querySelector('.step-error-message');
+                        if (!valid) {
+                            if (!errorMsg) {
+                                errorMsg = document.createElement('div');
+                                errorMsg.className = 'step-error-message text-danger mt-2';
+                                errorMsg.textContent = 'Please select at least one item before proceeding.';
+                                stepElement.appendChild(errorMsg);
+                            }
+                            errorMsg.style.display = 'block';
+                            return false;
+                        } else if (errorMsg) {
+                            errorMsg.style.display = 'none';
+                        }
                     }
 
                     const inputs = stepElement.querySelectorAll('input, select, textarea');
