@@ -1,3 +1,19 @@
+/* SJ custom logo alignment and size */
+.sj-logo-align {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  height: 100%;
+  padding-left: 0 !important;
+}
+.sj-logo-img {
+  height: 38px !important;
+  width: auto !important;
+  max-height: 38px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
 /* -------------------------------------------------------
     Theme Name: SJ-INFRA
     Theme URL: https://craftohtml.themezaa.com/
@@ -6797,7 +6813,10 @@ header .navbar {
   top: 0;
   right: 0;
   left: 0;
-  z-index: 99;
+  z-index: 1000;
+  height: 70px !important;
+  min-height: 70px !important;
+  background: white !important;
 }
 header .navbar [class*=col-] {
   padding: 0 15px;
@@ -19336,4 +19355,7 @@ footer .footer-navbar .nav-item:last-child a {
 }
 .footer-demo img {
   max-height: 55px !important;
+  height: 55px !important;
+  width: auto !important;
+  max-height: none !important;
 }

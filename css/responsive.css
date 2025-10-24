@@ -1,3 +1,26 @@
+@media (max-width: 767px) {
+  .sj-logo-img {
+    height: 34px !important;
+    max-height: 34px !important;
+  }
+  .sj-logo-align {
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+    padding-left: 0 !important;
+  }
+
+  /* Remove white space above background image */
+  header, .sj-mobile-logo {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  #home.p-0.ipad-top-space-margin {
+    margin-top: -24px !important;
+  }
+  .rev_slider_wrapper.fullwidthbanner-container {
+    margin-top: 0 !important;
+  }
+}
 /* -------------------------------------------------------
 
     Theme Name: SJ-INFRA

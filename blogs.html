@@ -1,3 +1,17 @@
+<style>
+@media (max-width: 767px) {
+    header, .sj-mobile-logo {
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
+    }
+    #home.p-0.ipad-top-space-margin {
+        margin-top: -24px !important;
+    }
+    .rev_slider_wrapper.fullwidthbanner-container {
+        margin-top: 0 !important;
+    }
+}
+</style>
 <!doctype html>
 <html class="no-js" lang="en">
     <head>
@@ -100,6 +114,52 @@
                     transform: translateY(-50px) !important;
                     position: relative;
                 }
+                #slide-1-layer-1 {
+                    letter-spacing: -2px !important;
+                    font-size: 48px !important;
+                    line-height: 1.1 !important;
+                    white-space: nowrap !important;
+                    overflow-x: auto !important;
+                    width: 100vw !important;
+                    max-width: 100vw !important;
+                    box-sizing: border-box !important;
+                    text-align: center !important;
+                    word-break: normal !important;
+                }
+                /* Make hero background fill viewport like about-us */
+                .rev-slidebg {
+                    object-fit: cover !important;
+                    object-position: center top !important;
+                    width: 100vw !important;
+                    height: 100vh !important;
+                    min-height: 100vh !important;
+                    max-height: 100vh !important;
+                    margin: 0 auto !important;
+                    display: block !important;
+                    transform: none !important; /* Keep this line */
+                }
+                #rev_slider_31_1_wrapper,
+                .rev_slider_wrapper,
+                #home.p-0.ipad-top-space-margin {
+                    height: 100vh !important;
+                    min-height: 100vh !important;
+                    margin-top: 0 !important;
+                }
+                
+                /* Adjust background image positioning for mobile */
+                
+                /* Adjust slider container for mobile */
+                
+                /* Ensure slider fills entire viewport */
+                .rev_slider_wrapper {
+                    height: 100vh !important;
+                    min-height: 100vh !important;
+                }
+                
+                /* Remove any top spacing from the section */
+                #home {
+                    margin-top: 0 !important; /* Keep this line */
+                }
             }
         </style>
         
@@ -117,7 +177,7 @@
                             <!-- SLIDE 1 - HOME/OVERVIEW -->
                             <li data-index="rs-01" data-transition="fade" data-slotamount="default" data-hideafterloop="0" data-hideslideonmobile="off" data-easein="default" data-easeout="default" data-masterspeed="600" data-rotate="0" data-saveperformance="off" data-title="Home" data-param1="01" data-description="Audio Technology Overview">
                                 <!-- SLIDE'S MAIN BACKGROUND IMAGE -->
-                                <img src="images/bg_image_header.jpg" alt="home background" class="rev-slidebg" data-bgparallax="6">
+                                <img src="images/hexa-backgrond.jpg" alt="home background" class="rev-slidebg" data-bgparallax="6">
                                 <span style="position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1;"></span>
                                  <!-- start large text layer -->
                                 <div style="width:100%; text-align:center;">
@@ -150,8 +210,8 @@
                                      id="slide-1-layer-1"
                                      data-frames='[{"delay":1500,"speed":2000,"frame":"0","from":"sX:1.3;opacity:0;fb:20px;","to":"o:1;fb:0;","ease":"Power3.easeInOut"},{"delay":"wait","speed":300,"frame":"999","to":"opacity:0;fb:0;","ease":"Power3.easeInOut"}]'
                                      data-visibility="['on', 'on', 'on', 'on']"
-                                     data-fontsize="['346','250','200','120']"
-                                     data-lineheight="['450','360','300','200']"
+                                     data-fontsize="['346','250','200','80']"
+                                     data-lineheight="['450','360','300','100']"
                                      data-fontweight="['700','700', '700','700']"
                                      data-color="['#FFF','#FFF', '#000', '#000']"
                                      data-textAlign="['center','center','center','center']"
@@ -159,7 +219,7 @@
                                      data-x="['center','center','center','center']"
                                      data-y="['middle','middle','middle','middle']"
                                      data-hoffset="['0','0','0','0']"
-                                     data-voffset="['-140','0','-100','-60']"
+                                     data-voffset="['-140','0','-100','0']"
                                      data-width="['auto', 'auto', 'auto', 'auto']"
                                      data-height="['auto', 'auto', 'auto', 'auto']"
                                      data-whitespace="['nowrap', 'nowrap', 'nowrap', 'nowrap']"
@@ -436,8 +496,8 @@
                     <div class="col-xl-6 col-lg-4 md-mt-25px order-3 order-lg-2 text-center elements-social social-icon-style-04">
                         <ul class="large-icon dark">
                             <li><a class="facebook" href="https://www.facebook.com/" target="_blank"><i class="fa-brands fa-facebook-f"></i><span></span></a></li>
-                            <li><a class="dribbble" href="http://www.dribbble.com" target="_blank"><i class="fa-brands fa-dribbble"></i><span></span></a></li>
-                            <li><a class="twitter" href="http://www.twitter.com" target="_blank"><i class="fa-brands fa-twitter"></i><span></span></a></li>
+                            <!-- <li><a class="dribbble" href="http://www.dribbble.com" target="_blank"><i class="fa-brands fa-dribbble"></i><span></span></a></li>
+                            <li><a class="twitter" href="http://www.twitter.com" target="_blank"><i class="fa-brands fa-twitter"></i><span></span></a></li> -->
                             <li><a class="instagram" href="http://www.instagram.com" target="_blank"><i class="fa-brands fa-instagram"></i><span></span></a></li> 
                             <li><a class="linkedin" href="http://www.linkedin.com" target="_blank"><i class="fa-brands fa-linkedin-in"></i><span></span></a></li> 
                         </ul>
